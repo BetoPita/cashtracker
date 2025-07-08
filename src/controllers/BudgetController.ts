@@ -37,14 +37,7 @@ export class BudgetController {
     res.status(200).json("Presupuesto actualizado correctamente");
   }
   static deleteById = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const budget = await Budget.findByPk(id);
-    if (!budget) {
-      res.status(201).json("Presupuesto eliminado correctamente");
-      return
-    }
-    await budget.destroy();
-    res.status(204).send();
-    console.log({ message: 'Delete by id request to the budget endpoint' });
+    await req.budget.destroy();
+    res.status(200).json("Presupuesto eliminado correctamente");
   }
 }
