@@ -21,4 +21,14 @@ class Budget extends Model<Budget> {
 
   @HasMany(() => Expense, {
     onUpdate: 'CASCADE',
-    on
+    onDelete: 'CASCADE',
+  })
+  declare expenses: Expense[]
+
+  @ForeignKey(() => User)
+  declare userId: number
+
+  @BelongsTo(() => User)
+  declare user: User
+}
+export default Budget;
