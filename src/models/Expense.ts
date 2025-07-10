@@ -22,9 +22,4 @@ class Expense extends Model<Expense> {
   declare budgetId: number
 
   @BelongsTo(() => Budget)
-  declare budget: Budget
-
-
-}
-
-export default Expense;
+  d
