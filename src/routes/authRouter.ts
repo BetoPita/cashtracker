@@ -38,4 +38,30 @@ router.post('/login',
   AuthController.login);
 
 
+router.post('/forgot-password',
+  body('email')
+    .isEmail()
+    .withMessage('Invalid email format'),
+  handleInputErrors,
+  AuthController.forgotPassword
+
+)
+
+router.post('/validate-token',
+  body('token')
+    .notEmpty()
+    .isLength({ min: 6, max: 6 })
+    .withMessage('Token is invalid'),
+  handleInputErrors,
+  AuthController.validateToken
+)
+
+router.post('/reset-password/:token',
+  body('password')
+    .notEmpty().withMessage('Password is required')
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
+  handleInputErrors,
+  AuthController.resetPasswordWithToken
+);
+
 export default router;
