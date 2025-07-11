@@ -5,7 +5,6 @@ import { checkPassword, hashPassword } from '../utils/auth';
 import { generateToken } from '../utils/token';
 import { AuthEmail } from '../emails/AuthEmail';
 import { generateJWT } from '../utils/jwt';
-import { param } from 'express-validator';
 
 export class AuthController {
 
@@ -154,5 +153,35 @@ export class AuthController {
       console.error({ message: 'Error resetting password', error });
       res.status(500).json({ error: 'Internal Server Error' });
     }
+  }
+
+  static user = async (req: Request, res: Response) => {
+    res.status(200).json(req.user);
+  }
+
+  static updateCurrentUserPassword = async (req: Request, res: Response) => {
+    const { currentPassword, password } = req.body;
+
+    const user = await User.findByPk(req.user.id);
+    const isPasswordCorrect = await checkPassword(currentPassword, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ error: "Contraseña incorrecta" });
+    }
+
+    user.password = await hashPassword(password);
+    await user.save();
+    res.status(200).json("El password se ha actualizado correctamente");
+  }
+
+  static checkPassword = async (req: Request, res: Response) => {
+    const { password } = req.body;
+
+    const user = await User.findByPk(req.user.id);
+    const isPasswordCorrect = await checkPassword(password, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ error: "Contraseña incorrecta" });
+    }
+
+    res.status(200).json("El password correcto");
   }
 }
