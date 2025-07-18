@@ -4,7 +4,8 @@ import { BudgetController } from '../../controllers/BudgetController'
 import Budget from '../../models/Budget'
 
 jest.mock('../../models/Budget', () => ({
-  findAll: jest.fn()
+  findAll: jest.fn(),
+  create : jest.fn(),
 }))
 
 describe('BudgetController.getAll', () => {
@@ -74,4 +75,80 @@ describe('BudgetController.getAll', () => {
     expect(res.statusCode).not.toBe(404);
   })
 
+  it('should handle errros fetching budgets', async () => {
+    const req = createRequest({
+      method: 'GET',
+      url: '/api/budgets',
+      user: { id: 10 }
+    })
+    const res = createResponse();
+
+    (Budget.findAll as jest.Mock).mockRejectedValue(new Error('Database error'));
+    await BudgetController.getAll(req, res);
+
+    expect(res.statusCode).toBe(500);
+    expect(res._getJSONData()).toEqual({ error: 'Internal Server Error' });
+  });
 })
+
+describe('BudgetController.create', () => {
+
+  it('should create a new budget and respose with status code 201', async () => {
+
+    const mockedBudget = {
+      save: jest.fn().mockResolvedValue(true),
+    };
+
+    Budget.create = jest.fn().mockResolvedValue(mockedBudget);
+    const req = createRequest({
+      method: 'POST',
+      url: '/api/budgets',
+      user: { id: 1 },
+      body: {
+        name: 'Test Budget',
+        amount: 1000
+      }
+    })
+    const res = createResponse();
+    await BudgetController.create(req, res);
+    const data = res._getJSONData();
+
+    expect(res.statusCode).toBe(201);
+    expect(data).toBe("Presupuesto creado correctamente");
+    expect(mockedBudget.save).toHaveBeenCalled();
+    expect(mockedBudget.save).toHaveBeenCalledTimes(1);
+
+  })
+
+  it('should create a new budget and respose with status code 201', async () => {
+
+    const mockedBudget = {
+      // genera const budget = await Budget.create(req.body);
+      save: jest.fn()
+    };
+
+
+    Budget.create = jest.fn().mockRejectedValue(new Error);
+    const req = createRequest({
+      method: 'POST',
+      url: '/api/budgets',
+      user: { id: 1 },
+      body: {
+        name: 'Test Budget',
+        amount: 1000
+      }
+    })
+    const res = createResponse();
+    await BudgetController.create(req, res);
+    const data = res._getJSONData();
+
+    expect(res.statusCode).toBe(500);
+    expect(data).toEqual({ error: 'Internal Server Error' });
+
+    expect(mockedBudget.save).not.toHaveBeenCalled();
+
+
+  })
+
+
+});
