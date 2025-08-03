@@ -55,7 +55,7 @@ export class AuthController {
       user.confirmed = true; // Set the user as confirmed
       await user.save();
 
-      res.status(200).json({ message: 'Account confirmed successfully' });
+      res.status(200).json('Account confirmed successfully');
     } catch (error) {
       console.error({ message: 'Error confirming account', error });
       res.status(500).json({ error: 'Internal Server Error' });
