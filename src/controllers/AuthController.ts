@@ -99,7 +99,7 @@ export class AuthController {
         token: user.token
       });
 
-      res.status(200).json({ message: 'Email de restablecimiento de contraseña enviado' });
+      res.status(200).json("Email de restablecimiento de contraseña enviado");
     } catch (error) {
       console.error({ message: 'Error sending reset password email', error });
       res.status(500).json({ error: 'Internal Server Error' });
@@ -120,7 +120,7 @@ export class AuthController {
         return res.status(404).json({ error: 'Token no válido' });
       }
 
-      res.status(200).json({ message: 'Token is valid' });
+      res.status(200).json("Token valido, asigna un nuevo password");
     } catch (error) {
       console.error({ message: 'Error validating token', error });
       res.status(500).json({ error: 'Internal Server Error' });
@@ -147,7 +147,7 @@ export class AuthController {
       user.token = null; // Clear the token after resetting password
       await user.save();
 
-      res.status(200).json({ message: 'Contraseña restablecida correctamente' });
+      res.status(200).json('Contraseña restablecida correctamente');
     }
     catch (error) {
       console.error({ message: 'Error resetting password', error });
