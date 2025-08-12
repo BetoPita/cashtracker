@@ -21,7 +21,6 @@ export class AuthEmail {
           <p>El equipo de CashTracker</p>
         `
     })
-    console.log("Mensaje enviado", email.messageId);
   }
   static sendResetPasswordEmail = async (user: EmailType) => {
     const email = await transport.sendMail({

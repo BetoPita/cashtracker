@@ -13,7 +13,6 @@ type TransportConfig = {
 }
 
 const config = () : TransportConfig => {
-  console.log(process.env.EMAIL_HOST);
   return {
     host: process.env.EMAIL_HOST,
     port: +process.env.EMAIL_PORT,
