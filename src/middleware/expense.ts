@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { body, param, validationResult } from 'express-validator'
 import Expense from '../models/Expense';
+import { BelongsTo } from 'sequelize-typescript';
 
 declare global {
   namespace Express {
@@ -49,6 +50,19 @@ export const validateExpenseExists = async (req: Request, res: Response, next: N
     }
     // modificar el type de la request para que pueda ser usado en el controlador
     req.expense = expense; // Attach the budget to the request object for further use
+    next();
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+export const BelongsToBudget = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    //verificar que el gasto pertenece al presupuesto
+    if (req.budget.id !== req.expense.budgetId) {
+      res.status(403).json({ error: 'Acción no válida' });
+      return;
+    }
     next();
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
