@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import User from '../models/User';
 
 
@@ -34,6 +34,13 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     }
 
   } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      return res.status(401).json({ error: 'Token expired'});
+    }
+
+    if (error instanceof JsonWebTokenError) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
     console.error({ message: 'Error validating token', error });
     return res.status(500).json({ error: 'Internal Server Error' });
   }
