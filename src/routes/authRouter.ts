@@ -88,4 +88,15 @@ router.post('/check-password',
   handleInputErrors,
   AuthController.checkPassword
 )
+
+router.put('/user',
+  authenticate,
+  body('name')
+    .notEmpty().withMessage('name is required'),
+  body('email')
+    .isEmail()
+    .withMessage('Invalid email format'),
+  handleInputErrors,
+  AuthController.updateProfile
+)
 export default router;
